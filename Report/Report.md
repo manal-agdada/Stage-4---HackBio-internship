@@ -19,14 +19,14 @@ For this analysis, we used TCGA LGG (534 samples) and GBM (176 samples) datasets
 ![caption2](https://github.com/user-attachments/assets/dc06f511-48ce-4a57-83e1-dfbeccab70ed)
 
 ## Methodology and Results
-For the next part of the task, we employed the K-means clustering algorithm, an unsupervised machine learning technique [3], to analyze a dataset comprising 666 samples of low-grade gliomas (LGG). The K-means algorithm was implemented in R, specifying 4 clusters to classify the samples based on methylation gene expression data. After performing the clustering, we cross-referenced the resulting clusters with the corresponding metadata indicating the IDH status of the samples (Mutant and Wild Type).  
+For the next part of the task, we employed the K-means clustering algorithm, an unsupervised machine learning technique [3], to analyze a dataset comprising 667 samples of gliomas (LGG = 513, GBM = 154). The K-means algorithm was implemented in RStudio, specifying 4 clusters to classify the samples based on gene expression data. After performing the clustering, we cross-referenced the resulting clusters with the corresponding metadata indicating the IDH status of the samples (Mutant and Wild Type).  
  ![Rplot06](https://github.com/user-attachments/assets/e20d88e1-e300-422f-b884-5a308dfd37e2)
 
-*_figure 3. K-means clusters_*    
+*_Figure 3. K-means clusters_*    
   
-  The K-means clustering resulted in the identification of four clusters. However, upon cross-referencing with the IDH status, both Mutant and Wild Type genes were found in all four clusters. This indicates that the model did not distinctly classify the genes into their respective IDH statuses. Additionally, two of the four clusters overlapped, suggesting that the boundaries between clusters were not well-defined. The clustering failed to separate Mutant from Wild Type samples as anticipated.
+  The K-means clustering resulted in the identification of four clusters. However, upon cross-referencing with the IDH status, both Mutant and Wild Type samples were found in all four clusters. This indicates that the model did not distinctly and exclusively classify the samples into Wild Type and Mutant subgroups. Additionally, two of the four clusters overlapped, suggesting that the boundaries between clusters were not well-defined. The clustering failed to separate Mutant from Wild Type samples as anticipated.
 ## Conclusion
-  The clustering results suggest that methylation gene expression data alone may not provide sufficient separation between IDH-mutant and IDH-wildtype gliomas. Possible reasons for this outcome include the possible inherent similarity in the methylation profiles of some Mutant and Wild Type samples or the need for additional features to enhance the clustering performance. The overlapping clusters may also indicate that the chosen number of clusters (k = 4) did not align well with the natural structure of the data, potentially requiring further tuning of the model parameters or the use of alternative clustering methods.
+  The clustering results suggest that gene expression data alone may not provide sufficient separation between IDH-mutant and IDH-wildtype gliomas. Possible reasons for this outcome include the possible inherent similarity in the expression profiles of some Mutant and Wild Type samples or the need for additional features to enhance the clustering performance. The overlapping clusters may also indicate that the chosen number of clusters (k = 4) did not align well with the natural structure of the data, potentially requiring further tuning of the model parameters or the use of alternative clustering methods.
 
 
 
