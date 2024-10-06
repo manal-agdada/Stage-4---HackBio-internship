@@ -195,115 +195,81 @@ SDs = apply(glioma.data, 2, sd)
 # A higher standard deviation indicates greater variability in the gene expression levels.
 
 topPredicts = order(SDs, decreasing = T)[1:3000]
-#After calculating the standard deviation, this lines ensures that the top 2000 genes with the highest SD are selected, and in descending order.
+#After calculating the standard deviation, this lines ensures that the top 3000 genes with the highest SD are selected, and in descending order.
 
 
 glioma.data = glioma.data[, topPredicts]
-#The trans_data is now reduced to only include the top 3000 genes that have the highest variability, 
+#The glioma.data is now reduced to only include the top 3000 genes that have the highest variability, 
 # which are often more informative for subsequent analyses like classification
 
-rownames(glioma.meta) <- glioma.meta$barcode
-
-glioma.meta$barcode <- NULL
-
-merge.data <- merge(glioma.data, glioma.meta, by = "row.names")
-
-rownames(merge.data) <- merge.data$Row.names
-
-merge.data$Row.names <- NULL
-
-dim(merge.data)
-
-anyNA(merge.data)
-sum(is.na(merge.data))
-
-
-
 # To remove near zero variation
-
-zero <- preProcess(merge.data, method = "nzv", uniqueCut = 15)
-merge.data <- predict(zero, merge.data)
-
+zer <- preProcess(glioma.data, method = "nzv", uniqueCut = 15)
+glioma.data <- predict(zer, glioma.data)
 
 # center. Centering helps to stabilize numerical computations 
 #and can be particularly important for algorithms sensitive to the scale of the data (like PCA, KNN, etc.).
-center <- preProcess(merge.data, method = "center")
-merge.data <- predict(center, merge.data)
-
-
+cent <- preProcess(glioma.data, method = "center")
+glioma.data <- predict(cent, glioma.data)
 
 # to remove highly correlated values.
 #Reduce Multicollinearity: High correlations between features can lead to issues in model training, 
 #such as inflated standard errors and difficulties in interpreting coefficients. 
-#Removing redundant features helps create a more stable model.
-# Improve Model Performance: By reducing the number of features, 
-# you can improve the efficiency and performance of certain machine learning algorithms, especially those sensitive to multicollinearity.
-
-corr <-preProcess(merge.data, method = "corr", cutoff = 0.5)
-merge.data <- predict(corr, merge.data)
-
-dim(merge.data)
-
-glioma.train <- createDataPartition(y = merge.data$IDH.status, p = 0.7)[[1]]
-
-train.glioma <- merge.data[glioma.train,]
-test.glioma <- merge.data[-glioma.train,]
+cor <- preProcess(glioma.data, method = "corr", cutoff = 0.5)
+glioma.data <- predict(cor, glioma.data)
 
 
-ctrl.glioma <- trainControl(method = "cv", number = 10)
+glioma.data <- scale(glioma.data)  # Scaling the data
+
+# Perform K-Means clustering
+set.seed(123)
+kmeans_result <- kmeans(glioma.data, centers = 4, nstart = 25)
+
+fviz_cluster(kmeans_result, data = glioma.data)
 
 
-knn.glioma <- train(IDH.status~., #the levels of classification
-                 data = train.glioma, #the training dataset
-                 method = "knn", # the knn method
-                 trControl = ctrl.glioma, #the training control
-                 tuneGrid = expand.grid(k = seq(1, 50, by = 2)))
 
-#the best K is:
-knn.glioma$bestTune
+# Create a dataframe from scaled data
+scaled_data_df <- as.data.frame(glioma.data)
 
-#predict
-trainPred.glioma <- predict(knn.glioma, newdata = train.glioma)
-testPred.glioma <- predict(knn.glioma, newdata = test.glioma)
+# Add cluster assignments to the dataframe
+scaled_data_df$Cluster <- kmeans_result$cluster
 
-trainPred.glioma <- as.factor(trainPred.glioma)
-train.glioma$IDH.status <- as.factor(train.glioma$IDH.status)
-testPred.glioma <- as.factor(testPred.glioma)
-test.glioma$IDH.status <- as.factor(test.glioma$IDH.status)
-
-levels(trainPred.glioma) <- levels(train.glioma$IDH.status)
-levels(testPred.glioma) <- levels(test.glioma$IDH.status)
-
-# Interpretation
-# confusion matrix
-confusionMatrix(trainPred.glioma, train.glioma$IDH.status)
-confusionMatrix(testPred.glioma, test.glioma$IDH.status)
+# View the updated dataframe
+head(scaled_data_df)
 
 
-explainer.glioma <- explain(knn.glioma, 
-                         label = "knn",
-                         data = train.glioma,
-                         y = as.numeric(train.glioma$IDH.status))
+## Process the metadata
+rownames(glioma.meta) <- glioma.meta$barcode
+
+glioma.meta$barcode <- NULL
+
+merge.data <- merge(scaled_data_df, glioma.meta, by = "row.names")
+
+rownames(merge.data) <- merge.data$Row.names
 
 
-importance.glioma <- feature_importance(explainer.glioma, n_sample = 30)
-top10 <- head(importance.glioma$variable, 11)
-last10 <- tail(importance.glioma$variable, 12)
+fviz_cluster(kmeans_result, 
+             data = glioma.data,  # Use the original scaled data
+             geom = "point",       # You can also use "text" to label points
+             pointsize = 2,        # Adjust point size for better visibility
+             ggtheme = theme_minimal()) +
+  # Add colors based on IDH status from the combined_data
+  geom_point(aes(color = combined_data$IDH.status)) + 
+  labs(color = "IDH Status") +  # Label for the legend
+  scale_color_manual(values = c("Mutant" = "blue", "WT" = "red"))
 
-# annotation
-top10_genes <- head(importance.glioma$variable, 11)
-last10_genes <- tail(importance.glioma$variable, 12)
-mart <- useMart(biomart = "ensembl", dataset = "hsapiens_gene_ensembl")
-annot_top <- getBM(
-  attributes = c('ensembl_gene_id', 'hgnc_symbol'),
-  filters = 'ensembl_gene_id',
-  values = top10_genes,
-  mart = mart)
-annot_top
 
-annot_last <- getBM(
-  attributes = c('ensembl_gene_id', 'hgnc_symbol'),
-  filters = 'ensembl_gene_id',
-  values = last10_genes,
-  mart = mart)
-annot_last
+
+
+
+
+
+
+
+
+
+
+
+
+
+
