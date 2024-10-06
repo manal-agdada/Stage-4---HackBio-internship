@@ -19,9 +19,10 @@ For this analysis, we used TCGA LGG (534 samples) and GBM (176 samples) datasets
 ![caption2](https://github.com/user-attachments/assets/dc06f511-48ce-4a57-83e1-dfbeccab70ed)
 
 ## Methodology and Results
-
+The K-Nearest Neighbor (KNN) model, a machine learning algorithm that classifies biological data by comparing an unknown sample to its nearest neighbors within a labeled dataset [3], was applied to classify mutant and wild-type samples in the LGG dataset. The model demonstrated high performance on the test data, achieving an accuracy of 95%. It correctly classified 127 mutant samples and misclassified only 2, while 63 wild-type samples were accurately identified, with 8 misclassified. The sensitivity of the model was 98.45%, and specificity was 88.73%, reflecting its strong ability to detect mutants and distinguish between the two classes. Despite the high performance, McNemar's test yielded a p-value of 0.1138, suggesting no significant difference between the classification errors for the two categories.
 ## Conclusion
 
 ## References
 1. Louis DN, Perry A, Reifenberger G, von Deimling A, Figarella-Branger D, Cavenee WK, Ohgaki H, Wiestler OD, Kleihues P, Ellison DW. **The 2016 World Health Organization Classification of Tumors of the Central Nervous System: a summary**. Acta Neuropathol. 2016 Jun;131(6):803-20. 
 2. Ceccarelli M, Barthel FP, Malta TM, Sabedot TS, Salama SR, Murray BA, Morozova O, Newton Y, Radenbaugh A, Pagnotta SM, Anjum S, Wang J, Manyam G, Zoppoli P, Ling S, Rao AA, Grifford M, Cherniack AD, Zhang H, Poisson L, Carlotti CG Jr, Tirapelli DP, Rao A, Mikkelsen T, Lau CC, Yung WK, Rabadan R, Huse J, Brat DJ, Lehman NL, Barnholtz-Sloan JS, Zheng S, Hess K, Rao G, Meyerson M, Beroukhim R, Cooper L, Akbani R, Wrensch M, Haussler D, Aldape KD, Laird PW, Gutmann DH; TCGA Research Network; Noushmehr H, Iavarone A, Verhaak RG. **Molecular Profiling Reveals Biologically Discrete Subsets and Pathways of Progression in Diffuse Glioma**. Cell. 2016 Jan 28;164(3):550-63. 
+Agarwal A, Singh K, Kant S, Bahadur RP. **A comparative analysis of machine learning classifiers for predicting protein-binding nucleotides in RNA sequences**. Comput Struct Biotechnol J. 2022 Jun 17;20:3195-3207..
