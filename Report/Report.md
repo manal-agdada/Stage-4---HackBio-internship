@@ -19,7 +19,14 @@ For this analysis, we used TCGA LGG (534 samples) and GBM (176 samples) datasets
 ![caption2](https://github.com/user-attachments/assets/dc06f511-48ce-4a57-83e1-dfbeccab70ed)
 
 ## Methodology and Results
-The K-Nearest Neighbor (KNN) model, a machine learning algorithm that classifies biological data by comparing an unknown sample to its nearest neighbors within a labeled dataset [3], was applied to classify mutant and wild-type samples in the LGG dataset. The model demonstrated high performance on the test data, achieving an accuracy of 95%. It correctly classified 127 mutant samples and misclassified only 2, while 63 wild-type samples were accurately identified, with 8 misclassified. The sensitivity of the model was 98.45%, and specificity was 88.73%, reflecting its strong ability to detect mutants and distinguish between the two classes. Despite the high performance, McNemar's test yielded a p-value of 0.1138, suggesting no significant difference between the classification errors for the two categories.
+For the next part of the task, we employed the K-means clustering algorithm, an unsupervised machine learning technique [3], to analyze a dataset comprising 666 samples of low-grade gliomas (LGG). The K-means algorithm was implemented in R, specifying 2 clusters to classify the samples based on methylation gene expression data. After performing the clustering, we cross-referenced the resulting clusters with the corresponding metadata indicating the IDH status of the samples (Mutant and Wild Type).  
+![Rplot02](https://github.com/user-attachments/assets/b0709f8c-5747-4030-8bd0-9c06bbc50a28)
+*_figure 3. K-means clusters
+The K-means clustering resulted in the identification of two distinct clusters. However, upon cross-referencing with the IDH status, it was found that both clusters predominantly comprised samples classified as Mutant, indicating a homogeneity in the clustering results. No samples were classified as Wild Type, suggesting that the algorithm effectively captured the distinct characteristics of the Mutant samples in the feature space.  
+## Conclusion
+The application of K-means clustering on the LGG dataset revealed significant insights into the IDH status of the samples. Despite specifying two clusters, the algorithm clustered all samples into the Mutant category, highlighting the potential of methylation gene expression data in distinguishing subtypes within IDH-mutant gliomas. Future studies could explore the inclusion of additional features or alternative clustering methods to better capture the diversity within LGG samples and to adequately represent Wild Type samples.
+
+
 ## Conclusion
 
 ## References
